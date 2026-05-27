@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Events – IEEE SC DBATU</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<div id="nav-container"></div>
+
+<div class="pt-nav" style="background:linear-gradient(145deg,#001e3c,#003f6b,#006699);padding:72px 0 60px">
+  <div class="container" style="text-align:center">
+    <span class="section-badge">Events</span>
+    <h1 style="font-family:'Syne',sans-serif;font-size:clamp(2.2rem,5vw,3.5rem);font-weight:800;color:#fff;margin:12px 0 16px">Events &amp; Workshops</h1>
+    <p style="color:rgba(255,255,255,.75);max-width:520px;margin:0 auto;font-size:1.05rem;line-height:1.7">From hands-on hackathons to expert-led seminars — there's always something happening at IEEE SC DBATU.</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="events-bar">
+      <input class="search-input" id="evtSearch" type="text" placeholder="🔍  Search events…"/>
+      <button class="filter-btn active" onclick="setFilter('all',this)">All Events</button>
+      <button class="filter-btn" onclick="setFilter('upcoming',this)">Upcoming</button>
+      <button class="filter-btn" onclick="setFilter('past',this)">Past Events</button>
+    </div>
+    <div class="events-grid" id="eventsGrid">
+      <p style="color:var(--text2)">Loading events…</p>
+    </div>
+  </div>
+</section>
+
+<div id="footer-container"></div>
+
+<!-- ══ REGISTRATION MODAL ══════════════════════════ -->
+<div id="regModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+  <div style="background:var(--card,#fff);border-radius:18px;padding:36px 32px;width:100%;max-width:440px;margin:16px;box-shadow:0 24px 64px rgba(0,0,0,.22);position:relative;">
+    <button onclick="closeRegModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text2,#666)">✕</button>
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:2.2rem;margin-bottom:8px" id="regIcon">📅</div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:1.35rem;font-weight:800;color:var(--text,#111);margin:0 0 6px">Register for Event</h2>
+      <p id="regEventTitle" style="color:var(--ieee-blue,#006699);font-weight:600;font-size:.95rem;margin:0"></p>
+    </div>
+    <div style="margin-bottom:16px">
+      <label style="display:block;font-size:.82rem;font-weight:600;color:var(--text2,#555);margin-bottom:6px">Full Name *</label>
+      <input id="regName" type="text" placeholder="Enter your full name" style="width:100%;padding:11px 14px;border:1.5px solid var(--border,#e2e8f0);border-radius:10px;font-size:.95rem;box-sizing:border-box;background:var(--bg,#f8fafc);color:var(--text,#111);outline:none;transition:border .2s" onfocus="this.style.borderColor='#006699'" onblur="this.style.borderColor='var(--border,#e2e8f0)'"/>
+    </div>
+    <div style="margin-bottom:24px">
+      <label style="display:block;font-size:.82rem;font-weight:600;color:var(--text2,#555);margin-bottom:6px">Email Address *</label>
+      <input id="regEmail" type="email" placeholder="Enter your email" style="width:100%;padding:11px 14px;border:1.5px solid var(--border,#e2e8f0);border-radius:10px;font-size:.95rem;box-sizing:border-box;background:var(--bg,#f8fafc);color:var(--text,#111);outline:none;transition:border .2s" onfocus="this.style.borderColor='#006699'" onblur="this.style.borderColor='var(--border,#e2e8f0)'"/>
+      <p style="font-size:.78rem;color:var(--text2,#888);margin:6px 0 0">You'll be added to our newsletter for event updates.</p>
+    </div>
+    <div id="regError" style="display:none;background:#fff5f5;border:1px solid #fed7d7;border-radius:8px;padding:10px 14px;color:#c53030;font-size:.85rem;margin-bottom:16px"></div>
+    <button id="regSubmitBtn" onclick="submitRegistration()" style="width:100%;padding:13px;background:linear-gradient(135deg,#006699,#00a3e0);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;transition:opacity .2s">
+      Register Now →
+    </button>
+  </div>
+</div>
+
+<div id="toast" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a202c;color:#fff;padding:12px 24px;border-radius:50px;font-size:.88rem;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:99999"></div>
+
+<script src="js/api.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/events.js"></script>
+</body>
+</html>

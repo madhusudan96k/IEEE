@@ -1,0 +1,32 @@
+[
+  {
+    "id": "mem-001",
+    "name": "Rohan Patil",
+    "email": "rohan.patil@dbatu.ac.in",
+    "ieeeId": "12345678",
+    "department": "Computer Engineering",
+    "year": "Third Year",
+    "status": "approved",
+    "registeredAt": "2024-08-15T10:00:00.000Z"
+  },
+  {
+    "id": "mem-002",
+    "name": "Divya Nair",
+    "email": "divya.nair@dbatu.ac.in",
+    "ieeeId": "87654321",
+    "department": "ENTC",
+    "year": "Second Year",
+    "status": "approved",
+    "registeredAt": "2024-08-20T11:30:00.000Z"
+  },
+  {
+    "id": "mem-003",
+    "name": "Aditya Pawar",
+    "email": "aditya.pawar@dbatu.ac.in",
+    "ieeeId": "N/A",
+    "department": "Mechanical",
+    "year": "First Year",
+    "status": "pending",
+    "registeredAt": "2025-01-10T09:00:00.000Z"
+  }
+]

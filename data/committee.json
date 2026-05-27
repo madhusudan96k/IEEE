@@ -1,0 +1,74 @@
+[
+  {
+    "id": "com-001",
+    "name": "Aryan Kulkarni",
+    "role": "Chairperson",
+    "roleClass": "chair",
+    "department": "Computer Engineering",
+    "bio": "Final year CS student passionate about AI and cloud computing. Leads the branch with innovation and vision.",
+    "initials": "AK",
+    "linkedin": "#",
+    "email": "chair.ieee@dbatu.ac.in",
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "com-002",
+    "name": "Priya Mehta",
+    "role": "Vice Chairperson",
+    "roleClass": "vchair",
+    "department": "Electronics & TC",
+    "bio": "Electronics enthusiast and IEEE Xplore contributor. Manages branch strategy and external relations.",
+    "initials": "PM",
+    "linkedin": "#",
+    "email": "vchair.ieee@dbatu.ac.in",
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "com-003",
+    "name": "Rahul Sharma",
+    "role": "Secretary",
+    "roleClass": "",
+    "department": "Computer Engineering",
+    "bio": "Meticulous organizer and documentation expert. Ensures smooth operations of all branch activities.",
+    "initials": "RS",
+    "linkedin": "#",
+    "email": "secretary.ieee@dbatu.ac.in",
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "com-004",
+    "name": "Sneha Joshi",
+    "role": "Treasurer",
+    "roleClass": "",
+    "department": "Civil Engineering",
+    "bio": "Finance and budgeting specialist. Manages IEEE branch funds, sponsorships, and resource allocation.",
+    "initials": "SJ",
+    "linkedin": "#",
+    "email": "treasurer.ieee@dbatu.ac.in",
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "com-005",
+    "name": "Kartik Rane",
+    "role": "Technical Head",
+    "roleClass": "",
+    "department": "ENTC",
+    "bio": "Embedded systems wizard. Leads all technical workshops, hackathons, and project mentoring.",
+    "initials": "KR",
+    "linkedin": "#",
+    "email": "tech.ieee@dbatu.ac.in",
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "com-006",
+    "name": "Ananya Desai",
+    "role": "Events Manager",
+    "roleClass": "",
+    "department": "Information Technology",
+    "bio": "Creative event planner with a flair for organizing large-scale tech fests and seminars.",
+    "initials": "AD",
+    "linkedin": "#",
+    "email": "events.ieee@dbatu.ac.in",
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  }
+]

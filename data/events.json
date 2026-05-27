@@ -1,0 +1,62 @@
+[
+  {
+    "id": "evt-001",
+    "title": "HackMatrix 2025",
+    "date": "May 15–17, 2025",
+    "type": "upcoming",
+    "icon": "💻",
+    "description": "A 72-hour national-level hackathon open to all engineering students. Theme: AI for Social Good. Prizes worth ₹1,50,000!",
+    "registrations": 142,
+    "createdAt": "2025-03-01T00:00:00.000Z"
+  },
+  {
+    "id": "evt-002",
+    "title": "Arduino & IoT Bootcamp",
+    "date": "April 28, 2025",
+    "type": "upcoming",
+    "icon": "🤖",
+    "description": "Hands-on 3-day bootcamp on Arduino, sensors, and building IoT prototypes from scratch. Open to all branches.",
+    "registrations": 87,
+    "createdAt": "2025-03-10T00:00:00.000Z"
+  },
+  {
+    "id": "evt-003",
+    "title": "Career Connect – Industry Talk",
+    "date": "April 5, 2025",
+    "type": "upcoming",
+    "icon": "🎤",
+    "description": "Panel discussion with engineers from ISRO, Infosys & TCS. Learn about career paths in technology.",
+    "registrations": 214,
+    "createdAt": "2025-03-15T00:00:00.000Z"
+  },
+  {
+    "id": "evt-004",
+    "title": "PCB Design Workshop",
+    "date": "Feb 10, 2025",
+    "type": "past",
+    "icon": "🔌",
+    "description": "A full-day workshop on KiCad PCB design, soldering techniques, and hardware prototyping basics.",
+    "registrations": 65,
+    "createdAt": "2025-01-20T00:00:00.000Z"
+  },
+  {
+    "id": "evt-005",
+    "title": "Cybersecurity Fundamentals",
+    "date": "Jan 22, 2025",
+    "type": "past",
+    "icon": "🛡️",
+    "description": "Introduction to ethical hacking, network security, CTF challenges, and OWASP top 10.",
+    "registrations": 98,
+    "createdAt": "2025-01-05T00:00:00.000Z"
+  },
+  {
+    "id": "evt-006",
+    "title": "IEEE Day 2024",
+    "date": "Oct 1, 2024",
+    "type": "past",
+    "icon": "🏆",
+    "description": "Annual IEEE Day celebration with paper presentations, quiz competitions, and cultural events.",
+    "registrations": 320,
+    "createdAt": "2024-09-01T00:00:00.000Z"
+  }
+]

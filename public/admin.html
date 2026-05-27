@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel – IEEE Student Chapter DBATU</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="css/admin.css"/>
+  <style>
+    /* ── Gallery upload box ── */
+    .gal-upload-box{
+      border:2px dashed var(--border);border-radius:12px;padding:32px;
+      text-align:center;cursor:pointer;transition:border .3s,background .3s;
+      background:var(--bg);position:relative;margin-bottom:16px;
+    }
+    .gal-upload-box:hover{border-color:#006699;background:rgba(0,102,153,.04);}
+    .gal-upload-box input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+    .gal-upload-box i{font-size:2.2rem;color:#006699;margin-bottom:10px;display:block;}
+    .gal-grid-admin{
+      display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+      gap:14px;margin-top:20px;
+    }
+    .gal-thumb{
+      border-radius:10px;overflow:hidden;aspect-ratio:4/3;
+      position:relative;background:linear-gradient(135deg,var(--ieee-dark),var(--ieee-light));
+    }
+    .gal-thumb img{width:100%;height:100%;object-fit:cover;}
+    .gal-thumb-overlay{
+      position:absolute;inset:0;background:rgba(0,0,0,.55);
+      display:flex;flex-direction:column;justify-content:space-between;
+      padding:10px;opacity:0;transition:opacity .25s;
+    }
+    .gal-thumb:hover .gal-thumb-overlay{opacity:1;}
+    .gal-thumb-title{color:#fff;font-size:.8rem;font-weight:600;font-family:'Outfit',sans-serif;}
+    .gal-thumb-del{
+      background:rgba(229,62,62,.85);border:none;border-radius:6px;
+      color:#fff;padding:4px 10px;font-size:.75rem;cursor:pointer;
+      font-weight:600;align-self:flex-end;transition:background .2s;
+    }
+    .gal-thumb-del:hover{background:#e53e3e;}
+    .gal-placeholder-icon{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:rgba(255,255,255,.5);}
+
+    /* ── Subscriber chip ── */
+    .sub-chip{
+      display:inline-flex;align-items:center;gap:8px;
+      background:var(--bg);border:1px solid var(--border);
+      border-radius:100px;padding:7px 14px;font-size:.85rem;
+      transition:all .2s;
+    }
+    .sub-chip:hover{border-color:#006699;}
+    .sub-chip-del{background:none;border:none;color:#e53e3e;cursor:pointer;font-size:.85rem;padding:0 2px;}
+    .sub-grid{display:flex;flex-wrap:wrap;gap:10px;padding:16px 20px;}
+
+    /* ── Notify form ── */
+    .notify-card{
+      background:var(--card);border:1px solid var(--border);
+      border-radius:var(--radius);padding:28px;box-shadow:var(--shadow);margin-bottom:24px;
+    }
+    .notify-preview-box{
+      background:var(--bg);border:1px solid var(--border);border-radius:10px;
+      padding:16px 20px;margin-bottom:20px;
+      display:flex;gap:24px;flex-wrap:wrap;align-items:center;
+    }
+    .np-item{text-align:center;}
+    .np-num{font-family:'Outfit',sans-serif;font-weight:800;font-size:1.6rem;color:var(--ieee-blue);}
+    .np-label{font-size:.78rem;color:var(--text2);}
+
+    /* ── Member cert/photo ── */
+    .file-link{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:4px 10px;border-radius:6px;font-size:.78rem;
+      background:rgba(0,102,153,.08);color:#006699;
+      transition:background .2s;text-decoration:none;
+    }
+    .file-link:hover{background:rgba(0,102,153,.18);}
+
+    /* ── Lockout indicator ── */
+    .security-info{
+      background:rgba(247,168,0,.08);border:1px solid rgba(247,168,0,.3);
+      border-radius:10px;padding:14px 18px;margin-bottom:20px;
+      font-size:.88rem;color:var(--text2);
+    }
+    .security-info strong{color:#d97706;}
+  </style>
+</head>
+<body>
+
+<!-- ════════════════ LOGIN ════════════════════ -->
+<div id="loginPage">
+  <div class="login-grid"></div>
+  <div class="login-card">
+    <div class="login-logo">IEEE</div>
+    <h1>Admin Panel</h1>
+    <p>IEEE Student Chapter – DBATU, Lonere</p>
+    <div id="lockMsg" style="display:none;background:rgba(229,62,62,.1);border:1px solid rgba(229,62,62,.3);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:.85rem;color:#e53e3e;text-align:center"></div>
+    <form onsubmit="doLogin(event)">
+      <div class="fl-group">
+        <input type="text" id="lUser" placeholder=" " autocomplete="username"/>
+        <label>Username</label>
+      </div>
+      <div class="fl-group">
+        <input type="password" id="lPass" placeholder=" " autocomplete="current-password"/>
+        <label>Password</label>
+      </div>
+      <button type="submit" class="login-btn" id="loginBtn">
+        <i class="fa fa-sign-in-alt"></i> Login
+      </button>
+    </form>
+    <p class="login-hint">Demo: <code>admin</code> / <code>ieee@DBATU#2024!</code></p>
+  </div>
+</div>
+
+<!-- ════════════════ APP ═════════════════════ -->
+<div id="adminApp">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-icon">IEEE</div>
+      <div class="sb-logo-text">IEEE SC DBATU<small>Admin Panel</small></div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section">
+        <div class="sb-section-label">Overview</div>
+        <button class="sb-link active" onclick="showPanel('dashboard',this)"><i class="fa fa-th-large"></i> Dashboard</button>
+      </div>
+      <div class="sb-section">
+        <div class="sb-section-label">Content</div>
+        <button class="sb-link" onclick="showPanel('events',this)"><i class="fa fa-calendar-alt"></i> Events</button>
+        <button class="sb-link" onclick="showPanel('gallery',this)"><i class="fa fa-images"></i> Gallery</button>
+        <button class="sb-link" onclick="showPanel('committee',this)"><i class="fa fa-users"></i> Committee</button>
+      </div>
+      <div class="sb-section">
+        <div class="sb-section-label">People</div>
+        <button class="sb-link" onclick="showPanel('members',this)">
+          <i class="fa fa-id-card"></i> Student Members
+          <span class="badge-pill" id="pendingBadge" style="display:none">0</span>
+        </button>
+        <button class="sb-link" onclick="showPanel('messages',this)">
+          <i class="fa fa-envelope"></i> Messages
+          <span class="badge-pill" id="unreadBadge" style="display:none">0</span>
+        </button>
+        <button class="sb-link" onclick="showPanel('subscribers',this)">
+          <i class="fa fa-bell"></i> Subscribers
+        </button>
+        <button class="sb-link" onclick="showPanel('participants',this)">
+          <i class="fa fa-ticket-alt"></i> Event Participants
+          <span class="badge-pill" id="participantsBadge" style="display:none">0</span>
+        </button>
+      </div>
+      <div class="sb-section">
+        <div class="sb-section-label">Communication</div>
+        <button class="sb-link" onclick="showPanel('notify',this)"><i class="fa fa-paper-plane"></i> Send Email Blast</button>
+      </div>
+      <div class="sb-section">
+        <div class="sb-section-label">Site</div>
+        <a class="sb-link" href="index.html" target="_blank"><i class="fa fa-external-link-alt"></i> View Website</a>
+      </div>
+    </nav>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-avatar">A</div>
+        <div class="sb-user-info">
+          <div class="sb-user-name">Administrator</div>
+          <div class="sb-user-role">IEEE SC DBATU</div>
+        </div>
+        <button class="sb-logout" onclick="doLogout()" title="Logout"><i class="fa fa-sign-out-alt"></i></button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main-content">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:14px">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+        <div class="topbar-left">
+          <h2 id="pageTitle">Dashboard</h2>
+          <p id="pageSubtitle">Welcome back, Admin</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button id="themeToggle" onclick="toggleTheme()">🌙 Dark</button>
+        <a href="index.html" class="add-btn" style="font-size:.82rem;padding:8px 16px" target="_blank">
+          <i class="fa fa-globe"></i> Live Site
+        </a>
+      </div>
+    </header>
+
+    <!-- ══ DASHBOARD ══════════════════════════ -->
+    <div class="page-panel active" id="panel-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon blue"><i class="fa fa-users"></i></div><div><div class="stat-num" id="st-total">–</div><div class="stat-label">Total Members</div></div></div>
+        <div class="stat-card"><div class="stat-icon green"><i class="fa fa-user-check"></i></div><div><div class="stat-num" id="st-approved">–</div><div class="stat-label">Approved</div></div></div>
+        <div class="stat-card"><div class="stat-icon orange"><i class="fa fa-clock"></i></div><div><div class="stat-num" id="st-pending">–</div><div class="stat-label">Pending Approvals</div></div></div>
+        <div class="stat-card"><div class="stat-icon purple"><i class="fa fa-calendar-alt"></i></div><div><div class="stat-num" id="st-events">–</div><div class="stat-label">Total Events</div></div></div>
+        <div class="stat-card"><div class="stat-icon teal"><i class="fa fa-images"></i></div><div><div class="stat-num" id="st-gallery">–</div><div class="stat-label">Gallery Photos</div></div></div>
+        <div class="stat-card"><div class="stat-icon red"><i class="fa fa-bell"></i></div><div><div class="stat-num" id="st-subs">–</div><div class="stat-label">Subscribers</div></div></div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-card"><h4>Member Status</h4><div class="mini-bar-wrap" id="memberChart"></div></div>
+        <div class="chart-card"><h4>Event Breakdown</h4><div class="mini-bar-wrap" id="eventChart"></div></div>
+      </div>
+      <div class="table-card">
+        <div class="table-toolbar">
+          <strong style="font-family:'Outfit',sans-serif">⏳ Pending Approvals</strong>
+          <button class="add-btn" onclick="showPanel('members',document.querySelectorAll('.sb-link')[4])">View All</button>
+        </div>
+        <div class="tbl-wrap">
+          <table><thead><tr><th>Name</th><th>Email</th><th>Department</th><th>Files</th><th>Date</th><th>Actions</th></tr></thead>
+          <tbody id="pendingTable"><tr><td colspan="6" style="text-align:center;color:var(--text2);padding:24px">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-toolbar">
+          <strong style="font-family:'Outfit',sans-serif">📬 Recent Messages</strong>
+          <button class="add-btn" onclick="showPanel('messages',document.querySelectorAll('.sb-link')[5])">View All</button>
+        </div>
+        <div id="dashMessages" style="padding:16px"></div>
+      </div>
+    </div>
+
+    <!-- ══ EVENTS ══════════════════════════════ -->
+    <div class="page-panel" id="panel-events">
+      <div class="section-hdr">
+        <h3>Events Management</h3>
+        <button class="add-btn" onclick="openEventModal()"><i class="fa fa-plus"></i> Add Event</button>
+      </div>
+      <div class="table-card">
+        <div class="table-toolbar">
+          <span style="font-size:.88rem;color:var(--text2)">Stored in MongoDB</span>
+          <input class="tbl-search" type="text" placeholder="Search…" oninput="filterTable('eventsTable',this.value)"/>
+        </div>
+        <div class="tbl-wrap">
+          <table><thead><tr><th>Event</th><th>Date</th><th>Type</th><th>Registrations</th><th>Actions</th></tr></thead>
+          <tbody id="eventsTable"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ GALLERY ══════════════════════════════ -->
+    <div class="page-panel" id="panel-gallery">
+      <div class="section-hdr">
+        <h3>Gallery Management</h3>
+        <span style="font-size:.85rem;color:var(--text2)" id="galCount"></span>
+      </div>
+      <!-- Upload box -->
+      <div class="notify-card">
+        <h4 style="font-family:'Outfit',sans-serif;font-weight:700;margin-bottom:16px;font-size:1rem">Upload New Photo</h4>
+        <div class="gal-upload-box" id="galUploadBox">
+          <input type="file" id="galFile" accept="image/*" onchange="previewGalFile(this)"/>
+          <i class="fa fa-cloud-upload-alt"></i>
+          <div style="font-family:'Outfit',sans-serif;font-weight:700;margin-bottom:4px">Click or drag &amp; drop photo</div>
+          <div style="font-size:.8rem;color:var(--text2)">JPG, PNG, WebP · Max 8 MB</div>
+        </div>
+        <div id="galFilePreview" style="display:none;margin-bottom:16px">
+          <img id="galPreviewImg" src="" style="max-height:160px;border-radius:10px;border:2px solid var(--ieee-blue)" alt="preview"/>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
+          <div class="m-form-group" style="margin:0">
+            <label>Title *</label>
+            <input type="text" id="galTitle" placeholder="IEEE Day 2024"/>
+          </div>
+          <div class="m-form-group" style="margin:0">
+            <label>Category</label>
+            <select id="galCat">
+              <option>General</option><option>Events</option><option>Workshops</option>
+              <option>Hackathons</option><option>Seminars</option><option>Awards</option><option>Team</option>
+            </select>
+          </div>
+          <div class="m-form-group" style="margin:0">
+            <label>Description</label>
+            <input type="text" id="galDesc" placeholder="Short description…"/>
+          </div>
+        </div>
+        <button class="add-btn" onclick="uploadGallery()" id="galUploadBtn">
+          <i class="fa fa-upload"></i> Upload Photo
+        </button>
+      </div>
+      <!-- Photo grid -->
+      <div class="gal-grid-admin" id="galGrid">
+        <p style="color:var(--text2)">Loading gallery…</p>
+      </div>
+    </div>
+
+    <!-- ══ COMMITTEE ════════════════════════════ -->
+    <div class="page-panel" id="panel-committee">
+      <div class="section-hdr">
+        <h3>Committee &amp; Profile Photos</h3>
+        <button class="add-btn" onclick="openCommitteeModal()"><i class="fa fa-plus"></i> Add Member</button>
+      </div>
+      <div class="table-card">
+        <div class="table-toolbar">
+          <span style="font-size:.88rem;color:var(--text2)">Profile photos stored in /uploads/committee</span>
+          <input class="tbl-search" type="text" placeholder="Search…" oninput="filterTable('committeeTable',this.value)"/>
+        </div>
+        <div class="tbl-wrap">
+          <table><thead><tr><th>Photo &amp; Name</th><th>Role</th><th>Department</th><th>Email</th><th>Actions</th></tr></thead>
+          <tbody id="committeeTable"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ MEMBERS ══════════════════════════════ -->
+    <div class="page-panel" id="panel-members">
+      <div class="section-hdr">
+        <h3>Student Members</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="filter-btn-sm active" onclick="setMF('all',this)">All</button>
+          <button class="filter-btn-sm" onclick="setMF('pending',this)">Pending</button>
+          <button class="filter-btn-sm" onclick="setMF('approved',this)">Approved</button>
+          <button class="filter-btn-sm" onclick="setMF('rejected',this)">Rejected</button>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-toolbar">
+          <span style="font-size:.88rem;color:var(--text2)" id="memberCount">Loading…</span>
+          <input class="tbl-search" type="text" placeholder="Search…" oninput="filterTable('membersTable',this.value)"/>
+        </div>
+        <div class="tbl-wrap">
+          <table><thead><tr><th>Student</th><th>IEEE ID</th><th>Dept</th><th>Year</th><th>Files</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="membersTable"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ MESSAGES ══════════════════════════════ -->
+    <div class="page-panel" id="panel-messages">
+      <div class="section-hdr">
+        <h3>Contact Messages</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="filter-btn-sm active" onclick="setMsgF('all',this)">All</button>
+          <button class="filter-btn-sm" onclick="setMsgF('unread',this)">Unread</button>
+          <button class="filter-btn-sm" onclick="setMsgF('read',this)">Read</button>
+        </div>
+      </div>
+      <div id="messagesContainer"><p style="color:var(--text2)">Loading…</p></div>
+    </div>
+
+    <!-- ══ SUBSCRIBERS ═══════════════════════════ -->
+    <div class="page-panel" id="panel-subscribers">
+      <div class="section-hdr">
+        <h3>Newsletter Subscribers</h3>
+        <span style="font-size:.88rem;color:var(--text2)" id="subCount">Loading…</span>
+      </div>
+      <div class="security-info">
+        <strong>ℹ️ Note:</strong> These subscribers signed up via the "Stay in the Loop" form on the website.
+        Use the <strong>Send Email Blast</strong> panel to notify all of them about new events.
+      </div>
+      <div class="table-card">
+        <div class="table-toolbar">
+          <span style="font-size:.88rem;color:var(--text2)">All active subscribers</span>
+          <input class="tbl-search" type="text" placeholder="Search email…" oninput="filterTable('subsTable',this.value)"/>
+        </div>
+        <div class="tbl-wrap">
+          <table><thead><tr><th>#</th><th>Email Address</th><th>Subscribed On</th><th>Actions</th></tr></thead>
+          <tbody id="subsTable"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PARTICIPANTS ══════════════════════════ -->
+    <div class="page-panel" id="panel-participants">
+      <div class="section-hdr">
+        <h3>Event Participants</h3>
+        <span style="font-size:.88rem;color:var(--text2)" id="participantCount">Loading…</span>
+      </div>
+      <div class="table-card" style="margin-bottom:20px">
+        <div class="table-toolbar">
+          <label style="font-size:.88rem;color:var(--text2);font-weight:600">Filter by Event:</label>
+          <select id="participantEventFilter" onchange="filterParticipantsByEvent()" style="padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.88rem;background:var(--bg);color:var(--text);cursor:pointer">
+            <option value="">All Events</option>
+          </select>
+          <input class="tbl-search" type="text" placeholder="Search name or email…" oninput="filterTable('participantsTable',this.value)" style="margin-left:auto"/>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Event</th><th>Registered On</th><th>Actions</th></tr></thead>
+            <tbody id="participantsTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ NOTIFY ════════════════════════════════ -->
+    <div class="page-panel" id="panel-notify">
+      <div class="section-hdr"><h3>Send Email Blast</h3></div>
+
+      <div class="security-info">
+        <strong>📧 SMTP Required:</strong> Configure <code>SMTP_HOST</code>, <code>SMTP_USER</code>, <code>SMTP_PASS</code>
+        in your <code>.env</code> file before sending. For Gmail, use an App Password.
+      </div>
+
+      <!-- Recipient preview -->
+      <div class="notify-card">
+        <h4 style="font-family:'Outfit',sans-serif;font-weight:700;margin-bottom:16px">Recipients Preview</h4>
+        <div class="notify-preview-box" id="notifyPreview">
+          <div class="np-item"><div class="np-num" id="np-subs">–</div><div class="np-label">Subscribers</div></div>
+          <div class="np-item"><div class="np-num" id="np-members">–</div><div class="np-label">Approved Members</div></div>
+          <div class="np-item"><div class="np-num" id="np-committee">–</div><div class="np-label">Committee</div></div>
+          <div style="margin-left:auto;padding-left:20px;border-left:1px solid var(--border)">
+            <div class="np-num" id="np-total" style="color:var(--ieee-blue)">–</div>
+            <div class="np-label">Total Recipients</div>
+          </div>
+        </div>
+        <!-- Recipient toggles -->
+        <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:20px">
+          <label style="display:flex;align-items:center;gap:8px;font-size:.9rem;cursor:pointer">
+            <input type="checkbox" id="nt-subs" checked style="accent-color:#006699"/> Subscribers
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:.9rem;cursor:pointer">
+            <input type="checkbox" id="nt-members" checked style="accent-color:#006699"/> Approved Members
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:.9rem;cursor:pointer">
+            <input type="checkbox" id="nt-committee" checked style="accent-color:#006699"/> Committee
+          </label>
+        </div>
+        <div class="m-form-group">
+          <label>Email Subject *</label>
+          <input type="text" id="notifySubject" placeholder="New Event: HackMatrix 2025 – Register Now!"/>
+        </div>
+        <div class="m-form-group">
+          <label>Message Body *</label>
+          <textarea id="notifyMsg" style="min-height:160px" placeholder="Write your announcement here…&#10;&#10;You can use multiple lines. Links and formatting will be preserved."></textarea>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <button class="add-btn" onclick="sendBlast()" id="sendBlastBtn">
+            <i class="fa fa-paper-plane"></i> Send to All Recipients
+          </button>
+          <span style="font-size:.83rem;color:var(--text2)">Emails sent via BCC — recipients cannot see each other</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-content -->
+</div><!-- /adminApp -->
+
+<!-- ══ MODALS ════════════════════════════════════ -->
+
+<!-- Event Modal -->
+<div class="modal-overlay" id="eventModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="evtModalTitle">Add Event</h3>
+      <button class="modal-close" onclick="closeModal('eventModal')"><i class="fa fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="evtId"/>
+      <div class="m-form-row">
+        <div class="m-form-group"><label>Title *</label><input type="text" id="evtTitle" placeholder="HackMatrix 2025"/></div>
+        <div class="m-form-group"><label>Date *</label><input type="text" id="evtDate" placeholder="May 15-17, 2025"/></div>
+      </div>
+      <div class="m-form-row">
+        <div class="m-form-group"><label>Type</label><select id="evtType"><option value="upcoming">Upcoming</option><option value="past">Past</option></select></div>
+        <div class="m-form-group"><label>Icon (emoji)</label><input type="text" id="evtIcon" placeholder="💻"/></div>
+      </div>
+      <div class="m-form-group"><label>Description *</label><textarea id="evtDesc" placeholder="Describe the event…"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="m-cancel" onclick="closeModal('eventModal')">Cancel</button>
+      <button class="m-submit" onclick="saveEvent()"><i class="fa fa-save"></i> Save Event</button>
+    </div>
+  </div>
+</div>
+
+<!-- Committee Modal -->
+<div class="modal-overlay" id="committeeModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="cmModalTitle">Add Committee Member</h3>
+      <button class="modal-close" onclick="closeModal('committeeModal')"><i class="fa fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="cmId"/>
+      <div style="text-align:center;margin-bottom:20px;padding:16px;background:var(--bg);border-radius:12px;border:2px dashed var(--border)">
+        <div id="initialsPreview" class="initials-preview" style="margin:0 auto 10px">?</div>
+        <img id="photoPreview" class="photo-preview" src="" alt="Preview" style="margin:0 auto 10px"/>
+        <label for="cmPhoto" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;padding:8px 18px;background:var(--ieee-blue);color:#fff;border-radius:100px;font-size:.82rem;font-weight:600;font-family:'Outfit',sans-serif">
+          <i class="fa fa-camera"></i> Upload Profile Photo
+        </label>
+        <input type="file" id="cmPhoto" accept="image/*" style="display:none" onchange="previewPhoto(this)"/>
+        <div style="font-size:.74rem;color:var(--text2);margin-top:6px">JPG / PNG / WebP · max 5 MB</div>
+      </div>
+      <div class="m-form-row">
+        <div class="m-form-group"><label>Full Name *</label><input type="text" id="cmName" placeholder="Aryan Kulkarni" oninput="updateInitPrev()"/></div>
+        <div class="m-form-group"><label>Initials</label><input type="text" id="cmInitials" placeholder="AK" maxlength="2" oninput="updateInitPrev()"/></div>
+      </div>
+      <div class="m-form-row">
+        <div class="m-form-group"><label>Role *</label><input type="text" id="cmRole" placeholder="Chairperson"/></div>
+        <div class="m-form-group"><label>Badge Style</label>
+          <select id="cmRoleClass"><option value="">Normal</option><option value="chair">Chairperson (Gold)</option><option value="vchair">Vice Chair (Dark)</option></select>
+        </div>
+      </div>
+      <div class="m-form-group"><label>Department *</label>
+        <select id="cmDept"><option value="">Select Department</option><option>Computer Engineering</option><option>Electronics &amp; Telecommunication</option><option>Mechanical Engineering</option><option>Civil Engineering</option><option>Chemical Engineering</option><option>Information Technology</option><option>Electrical Engineering</option><option>ENTC</option></select>
+      </div>
+      <div class="m-form-group"><label>Bio</label><textarea id="cmBio" placeholder="Short bio…"></textarea></div>
+      <div class="m-form-row">
+        <div class="m-form-group"><label>LinkedIn</label><input type="text" id="cmLinkedin" placeholder="https://linkedin.com/in/…"/></div>
+        <div class="m-form-group"><label>Email</label><input type="email" id="cmEmail" placeholder="member@dbatu.ac.in"/></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="m-cancel" onclick="closeModal('committeeModal')">Cancel</button>
+      <button class="m-submit" onclick="saveCommittee()"><i class="fa fa-save"></i> Save Member</button>
+    </div>
+  </div>
+</div>
+
+<!-- Message View Modal -->
+<div class="modal-overlay" id="messageModal">
+  <div class="modal-box" style="max-width:500px">
+    <div class="modal-header"><h3>Message Details</h3><button class="modal-close" onclick="closeModal('messageModal')"><i class="fa fa-times"></i></button></div>
+    <div class="modal-body">
+      <div style="margin-bottom:16px">
+        <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:1.05rem" id="mName"></div>
+        <div style="color:var(--ieee-blue);font-size:.85rem" id="mEmail"></div>
+        <div style="color:var(--text2);font-size:.78rem;margin-top:4px" id="mDate"></div>
+      </div>
+      <div style="font-family:'Outfit',sans-serif;font-weight:600;color:var(--ieee-blue);margin-bottom:10px" id="mSubject"></div>
+      <div style="background:var(--bg);border-radius:10px;padding:16px;color:var(--text2);line-height:1.7;font-size:.9rem;white-space:pre-wrap" id="mBody"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="m-cancel" onclick="closeModal('messageModal')">Close</button>
+      <a id="mReplyBtn" href="#" class="m-submit" style="display:inline-flex;align-items:center;gap:6px"><i class="fa fa-reply"></i> Reply via Email</a>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Delete -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box" style="max-width:400px">
+    <div class="modal-header"><h3>Confirm Delete</h3><button class="modal-close" onclick="closeModal('confirmModal')"><i class="fa fa-times"></i></button></div>
+    <div class="modal-body"><p id="confirmMsg" style="color:var(--text2);line-height:1.7"></p></div>
+    <div class="modal-footer">
+      <button class="m-cancel" onclick="closeModal('confirmModal')">Cancel</button>
+      <button class="m-submit" style="background:linear-gradient(135deg,#e53e3e,#c53030)" id="confirmOk"><i class="fa fa-trash"></i> Delete</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="js/api.js"></script>
+<script>
+/* ═══════ STATE ══════════════════════════════ */
+let allEvents=[], allCommittee=[], allMembers=[], allMessages=[], allSubs=[], allGallery=[];
+let mf='all', msgF='all';
+
+/* ═══════ THEME ══════════════════════════════ */
+function toggleTheme(){const d=document.documentElement.getAttribute('data-theme')==='dark';const n=d?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('ieee-theme',n);document.getElementById('themeToggle').textContent=n==='dark'?'☀️ Light':'🌙 Dark';}
+(function(){const t=localStorage.getItem('ieee-theme')||'light';document.documentElement.setAttribute('data-theme',t);const b=document.getElementById('themeToggle');if(b)b.textContent=t==='dark'?'☀️ Light':'🌙 Dark';})();
+
+/* ═══════ AUTH ═══════════════════════════════ */
+async function doLogin(e){
+  e.preventDefault();
+  const btn=document.getElementById('loginBtn');
+  btn.disabled=true; btn.innerHTML='<i class="fa fa-spinner fa-spin"></i> Logging in…';
+  document.getElementById('lockMsg').style.display='none';
+  try{
+    const r=await API.login(document.getElementById('lUser').value, document.getElementById('lPass').value);
+    sessionStorage.setItem('ieee-admin-token',r.token);
+    document.getElementById('loginPage').style.display='none';
+    document.getElementById('adminApp').classList.add('visible');
+    await init();
+  }catch(err){
+    const lm=document.getElementById('lockMsg');
+    lm.textContent=err.message||'Invalid credentials.';
+    lm.style.display='block';
+    btn.disabled=false; btn.innerHTML='<i class="fa fa-sign-in-alt"></i> Login';
+  }
+}
+function doLogout(){sessionStorage.removeItem('ieee-admin-token');location.reload();}
+async function tryAutoLogin(){
+  const t=sessionStorage.getItem('ieee-admin-token');
+  if(!t)return;
+  try{await API.verify();document.getElementById('loginPage').style.display='none';document.getElementById('adminApp').classList.add('visible');await init();}
+  catch{sessionStorage.removeItem('ieee-admin-token');}
+}
+
+/* ═══════ INIT ════════════════════════════════ */
+async function init(){
+  await Promise.all([loadStats(),loadEvents(),loadCommittee(),loadMembers(),loadMessages(),loadGallery(),loadSubscribers(),loadNotifyPreview(),loadParticipants()]);
+}
+
+/* ═══════ NAV ════════════════════════════════ */
+const PM={dashboard:{t:'Dashboard',s:'Overview & stats'},events:{t:'Events',s:'Add & manage events'},gallery:{t:'Gallery',s:'Upload & manage photos'},committee:{t:'Committee',s:'Manage members & photos'},members:{t:'Student Members',s:'Approve registrations & view uploads'},messages:{t:'Contact Messages',s:'Messages from website visitors'},subscribers:{t:'Newsletter Subscribers',s:'Email list from website signups'},participants:{t:'Event Participants',s:'People registered for upcoming events'},notify:{t:'Send Email Blast',s:'Notify all subscribers, members & committee'}};
+function showPanel(id,btn){document.querySelectorAll('.page-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.sb-link').forEach(b=>b.classList.remove('active'));document.getElementById('panel-'+id).classList.add('active');if(btn)btn.classList.add('active');document.getElementById('pageTitle').textContent=PM[id]?.t||id;document.getElementById('pageSubtitle').textContent=PM[id]?.s||'';document.getElementById('sidebar').classList.remove('open');}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+
+/* ═══════ STATS ══════════════════════════════ */
+async function loadStats(){
+  try{
+    const s=await API.getStats();
+    document.getElementById('st-total').textContent=s.totalMembers??'–';
+    document.getElementById('st-approved').textContent=s.approvedMembers??'–';
+    document.getElementById('st-pending').textContent=s.pendingMembers??'–';
+    document.getElementById('st-events').textContent=s.totalEvents??'–';
+    document.getElementById('st-gallery').textContent=s.galleryCount??'–';
+    document.getElementById('st-subs').textContent=s.subscribers??'–';
+    const pb=document.getElementById('pendingBadge');
+    pb.textContent=s.pendingMembers; pb.style.display=s.pendingMembers>0?'':'none';
+    const ub=document.getElementById('unreadBadge');
+    ub.textContent=s.unreadMessages; ub.style.display=s.unreadMessages>0?'':'none';
+    const tot=s.totalMembers||1;
+    document.getElementById('memberChart').innerHTML=[{l:'Approved',v:s.approvedMembers,p:Math.round(s.approvedMembers/tot*100)},{l:'Pending',v:s.pendingMembers,p:Math.round(s.pendingMembers/tot*100)},{l:'Total',v:s.totalMembers,p:100}].map(r=>`<div class="mini-bar-item"><div class="mini-bar-label"><span>${r.l}</span><span>${r.v}</span></div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${r.p}%"></div></div></div>`).join('');
+    const et=s.totalEvents||1, pe=s.totalEvents-s.upcomingEvents;
+    document.getElementById('eventChart').innerHTML=[{l:'Upcoming',v:s.upcomingEvents,p:Math.round(s.upcomingEvents/et*100)},{l:'Past',v:pe,p:Math.round(pe/et*100)},{l:'Total',v:s.totalEvents,p:100}].map(r=>`<div class="mini-bar-item"><div class="mini-bar-label"><span>${r.l}</span><span>${r.v}</span></div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${r.p}%"></div></div></div>`).join('');
+  }catch(e){console.error(e);}
+}
+
+/* ═══════ EVENTS ════════════════════════════= */
+async function loadEvents(){try{allEvents=await API.getEvents();renderEventsTable();}catch{showToast('Failed to load events','error');}}
+function renderEventsTable(){const b=document.getElementById('eventsTable');if(!allEvents.length){b.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text2);padding:24px">No events yet.</td></tr>';return;}b.innerHTML=allEvents.map(e=>`<tr data-search="${(e.title+e.date+e.type).toLowerCase()}"><td><div class="td-name">${e.icon||'📅'} ${e.title}</div></td><td>${e.date}</td><td><span class="status-badge ${e.type}">${e.type}</span></td><td>${e.registrations||0}</td><td><div class="act-group"><button class="act-btn act-edit" onclick="openEventModal('${e._id}')"><i class="fa fa-edit"></i> Edit</button><button class="act-btn act-delete" onclick="confirmDel('event','${e._id}','${esc(e.title)}')"><i class="fa fa-trash"></i></button></div></td></tr>`).join('');}
+function openEventModal(id){const ev=id?allEvents.find(e=>e._id===id):null;document.getElementById('evtModalTitle').textContent=ev?'Edit Event':'Add Event';document.getElementById('evtId').value=ev?ev._id:'';document.getElementById('evtTitle').value=ev?ev.title:'';document.getElementById('evtDate').value=ev?ev.date:'';document.getElementById('evtIcon').value=ev?ev.icon:'';document.getElementById('evtDesc').value=ev?ev.description:'';document.getElementById('evtType').value=ev?ev.type:'upcoming';openModal('eventModal');}
+async function saveEvent(){const id=document.getElementById('evtId').value;const p={title:document.getElementById('evtTitle').value.trim(),date:document.getElementById('evtDate').value.trim(),type:document.getElementById('evtType').value,icon:document.getElementById('evtIcon').value.trim()||'📅',description:document.getElementById('evtDesc').value.trim()};if(!p.title||!p.date||!p.description){showToast('Fill all required fields.','error');return;}try{id?await API.updateEvent(id,p):await API.addEvent(p);showToast(id?'Event updated! ✅':'Event added! 🎉','success');closeModal('eventModal');await loadEvents();await loadStats();}catch(e){showToast(e.message||'Save failed.','error');}}
+
+/* ═══════ GALLERY ════════════════════════════ */
+async function loadGallery(){try{allGallery=await API.getGallery();renderGalleryAdmin();}catch{showToast('Failed to load gallery','error');}}
+function previewGalFile(input){const file=input.files[0];if(!file)return;const r=new FileReader();r.onload=e=>{document.getElementById('galPreviewImg').src=e.target.result;document.getElementById('galFilePreview').style.display='block';};r.readAsDataURL(file);}
+async function uploadGallery(){
+  const file=document.getElementById('galFile').files[0];
+  const title=document.getElementById('galTitle').value.trim();
+  if(!file){showToast('Please select a photo.','error');return;}
+  if(!title){showToast('Please add a title.','error');return;}
+  const btn=document.getElementById('galUploadBtn');
+  btn.disabled=true; btn.innerHTML='<i class="fa fa-spinner fa-spin"></i> Uploading…';
+  const fd=new FormData();
+  fd.append('photo',file);
+  fd.append('title',title);
+  fd.append('category',document.getElementById('galCat').value);
+  fd.append('description',document.getElementById('galDesc').value);
+  try{
+    await API.addGallery(fd);
+    showToast('Photo uploaded! 🎉','success');
+    document.getElementById('galFile').value='';
+    document.getElementById('galTitle').value='';
+    document.getElementById('galDesc').value='';
+    document.getElementById('galFilePreview').style.display='none';
+    await loadGallery(); await loadStats();
+  }catch(e){showToast(e.message||'Upload failed.','error');}
+  finally{btn.disabled=false;btn.innerHTML='<i class="fa fa-upload"></i> Upload Photo';}
+}
+function renderGalleryAdmin(){
+  const grid=document.getElementById('galGrid');
+  document.getElementById('galCount').textContent=`${allGallery.length} photo${allGallery.length!==1?'s':''}`;
+  if(!allGallery.length){grid.innerHTML='<p style="color:var(--text2)">No photos yet. Upload the first one above!</p>';return;}
+  grid.innerHTML=allGallery.map(p=>`
+    <div class="gal-thumb">
+      ${p.filename?`<img src="/uploads/gallery/${p.filename}" alt="${p.title}" loading="lazy"/>`:`<div class="gal-placeholder-icon"><i class="fa fa-image"></i></div>`}
+      <div class="gal-thumb-overlay">
+        <div class="gal-thumb-title">${p.title}</div>
+        <button class="gal-thumb-del" onclick="confirmDel('gallery','${p._id}','${esc(p.title)}')">
+          <i class="fa fa-trash"></i> Delete
+        </button>
+      </div>
+    </div>`).join('');
+}
+
+/* ═══════ COMMITTEE ══════════════════════════ */
+async function loadCommittee(){try{allCommittee=await API.getCommittee();renderCommitteeTable();}catch{showToast('Failed to load committee','error');}}
+function renderCommitteeTable(){const b=document.getElementById('committeeTable');if(!allCommittee.length){b.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text2);padding:24px">No members yet.</td></tr>';return;}b.innerHTML=allCommittee.map(m=>{const ph=m.photo?`<img src="/uploads/committee/${m.photo}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--ieee-blue)" alt="${m.name}"/>`:`<div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#006699,#00a3e0);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.78rem">${m.initials||'?'}</div>`;return`<tr data-search="${(m.name+m.role+m.department).toLowerCase()}"><td><div style="display:flex;align-items:center;gap:10px">${ph}<div class="td-name">${m.name}</div></div></td><td><span class="status-badge ${m.roleClass||'upcoming'}">${m.role}</span></td><td>${m.department}</td><td><a href="mailto:${m.email}" style="color:var(--ieee-blue);font-size:.84rem">${m.email}</a></td><td><div class="act-group"><button class="act-btn act-edit" onclick="openCommitteeModal('${m._id}')"><i class="fa fa-edit"></i></button><button class="act-btn act-delete" onclick="confirmDel('committee','${m._id}','${esc(m.name)}')"><i class="fa fa-trash"></i></button></div></td></tr>`;}).join('');}
+function openCommitteeModal(id){const m=id?allCommittee.find(x=>x._id===id):null;document.getElementById('cmModalTitle').textContent=m?'Edit Member':'Add Member';document.getElementById('cmId').value=m?m._id:'';document.getElementById('cmName').value=m?m.name:'';document.getElementById('cmInitials').value=m?m.initials:'';document.getElementById('cmRole').value=m?m.role:'';document.getElementById('cmRoleClass').value=m?m.roleClass:'';document.getElementById('cmDept').value=m?m.department:'';document.getElementById('cmBio').value=m?m.bio:'';document.getElementById('cmLinkedin').value=m?m.linkedin:'';document.getElementById('cmEmail').value=m?m.email:'';document.getElementById('cmPhoto').value='';const prev=document.getElementById('photoPreview');const ip=document.getElementById('initialsPreview');if(m&&m.photo){prev.src='/uploads/committee/'+m.photo;prev.classList.add('show');ip.style.display='none';}else{prev.classList.remove('show');ip.style.display='flex';ip.textContent=m?(m.initials||m.name.slice(0,2).toUpperCase()||'?'):'?';}openModal('committeeModal');}
+function previewPhoto(input){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const p=document.getElementById('photoPreview');const ip=document.getElementById('initialsPreview');p.src=e.target.result;p.classList.add('show');ip.style.display='none';};r.readAsDataURL(f);}
+function updateInitPrev(){const n=document.getElementById('cmName').value;const i=document.getElementById('cmInitials').value;const d=i||(n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2))||'?';const ip=document.getElementById('initialsPreview');if(!document.getElementById('photoPreview').classList.contains('show'))ip.textContent=d;}
+async function saveCommittee(){const id=document.getElementById('cmId').value;const name=document.getElementById('cmName').value.trim();if(!name||!document.getElementById('cmRole').value||!document.getElementById('cmDept').value){showToast('Name, role & department required.','error');return;}const fd=new FormData();fd.append('name',name);fd.append('initials',document.getElementById('cmInitials').value.trim()||(name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)));fd.append('role',document.getElementById('cmRole').value.trim());fd.append('roleClass',document.getElementById('cmRoleClass').value);fd.append('department',document.getElementById('cmDept').value);fd.append('bio',document.getElementById('cmBio').value.trim());fd.append('linkedin',document.getElementById('cmLinkedin').value.trim()||'#');fd.append('email',document.getElementById('cmEmail').value.trim()||'#');const pf=document.getElementById('cmPhoto').files[0];if(pf)fd.append('photo',pf);try{id?await API.updateCommittee(id,fd):await API.addCommittee(fd);showToast(id?'Updated! ✅':'Added! 🎉','success');closeModal('committeeModal');await loadCommittee();await loadStats();}catch(e){showToast(e.message||'Save failed.','error');}}
+
+/* ═══════ MEMBERS ════════════════════════════ */
+async function loadMembers(){try{allMembers=await API.getMembers();renderMembersTable();renderPendingDash();}catch{showToast('Failed to load members','error');}}
+function setMF(f,btn){mf=f;document.querySelectorAll('#panel-members .filter-btn-sm').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderMembersTable();}
+function renderMembersTable(){
+  const b=document.getElementById('membersTable');
+  const filt=mf==='all'?allMembers:allMembers.filter(m=>m.status===mf);
+  document.getElementById('memberCount').textContent=`${filt.length} of ${allMembers.length} members`;
+  if(!filt.length){b.innerHTML=`<tr><td colspan="7" style="text-align:center;color:var(--text2);padding:24px">No ${mf} members.</td></tr>`;return;}
+  b.innerHTML=filt.map(m=>`<tr data-search="${(m.name+m.email+m.department).toLowerCase()}">
+    <td><div class="td-name">${m.photo?`<img src="/uploads/members/${m.photo}" style="width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid var(--ieee-blue);vertical-align:middle;margin-right:8px" alt=""/>`:''} ${m.name}</div><div class="td-sub">${m.email}</div></td>
+    <td>${m.ieeeId}</td><td>${m.department}</td><td>${m.year}</td>
+    <td><div class="act-group">
+      ${m.photo?`<a href="/uploads/members/${m.photo}" target="_blank" class="file-link"><i class="fa fa-user"></i> Photo</a>`:''}
+      ${m.certificate?`<a href="/uploads/certificates/${m.certificate}" target="_blank" class="file-link"><i class="fa fa-file-alt"></i> Cert</a>`:''}
+      ${!m.photo&&!m.certificate?'<span style="color:var(--text2);font-size:.78rem">None</span>':''}
+    </div></td>
+    <td><span class="status-badge ${m.status}">${m.status}</span></td>
+    <td><div class="act-group">
+      ${m.status==='pending'?`<button class="act-btn act-approve" onclick="setMS('${m._id}','approved')"><i class="fa fa-check"></i></button><button class="act-btn act-reject" onclick="setMS('${m._id}','rejected')"><i class="fa fa-times"></i></button>`:m.status==='rejected'?`<button class="act-btn act-approve" onclick="setMS('${m._id}','approved')"><i class="fa fa-redo"></i></button>`:`<button class="act-btn act-reject" onclick="setMS('${m._id}','rejected')"><i class="fa fa-ban"></i></button>`}
+      <button class="act-btn act-delete" onclick="confirmDel('member','${m._id}','${esc(m.name)}')"><i class="fa fa-trash"></i></button>
+    </div></td>
+  </tr>`).join('');
+}
+function renderPendingDash(){const b=document.getElementById('pendingTable');const p=allMembers.filter(m=>m.status==='pending');if(!p.length){b.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:24px">No pending approvals!</td></tr>';return;}b.innerHTML=p.map(m=>`<tr><td>${m.name}</td><td>${m.email}</td><td>${m.department}</td><td><div class="act-group">${m.photo?`<a href="/uploads/members/${m.photo}" target="_blank" class="file-link"><i class="fa fa-user"></i> Photo</a>`:''} ${m.certificate?`<a href="/uploads/certificates/${m.certificate}" target="_blank" class="file-link"><i class="fa fa-file-alt"></i> Cert</a>`:''}</div></td><td>${new Date(m.createdAt).toLocaleDateString('en-IN')}</td><td><div class="act-group"><button class="act-btn act-approve" onclick="setMS('${m._id}','approved')"><i class="fa fa-check"></i> Approve</button><button class="act-btn act-reject" onclick="setMS('${m._id}','rejected')"><i class="fa fa-times"></i></button></div></td></tr>`).join('');}
+async function setMS(id,status){try{await API.updateStatus(id,status);showToast(`Member ${status}!`,'success');await loadMembers();await loadStats();}catch(e){showToast(e.message,'error');}}
+
+/* ═══════ MESSAGES ════════════════════════════ */
+async function loadMessages(){try{allMessages=await API.getMessages();renderMessages();renderDashMsgs();}catch{showToast('Failed to load messages','error');}}
+function setMsgF(f,btn){msgF=f;document.querySelectorAll('#panel-messages .filter-btn-sm').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderMessages();}
+function renderMessages(){const c=document.getElementById('messagesContainer');const filt=msgF==='all'?allMessages:allMessages.filter(m=>msgF==='unread'?!m.read:m.read);if(!filt.length){c.innerHTML=`<div style="text-align:center;padding:48px;color:var(--text2)"><i class="fa fa-inbox" style="font-size:2.5rem;margin-bottom:12px;display:block;opacity:.3"></i>No ${msgF} messages.</div>`;return;}c.innerHTML=filt.map(m=>`<div class="msg-card ${m.read?'read':'unread'}"><div class="msg-header"><div><div class="msg-sender">${m.name}${!m.read?' <span class="status-badge unread" style="margin-left:6px">New</span>':''}</div><div class="msg-email">${m.email}</div></div><div class="msg-date">${new Date(m.createdAt).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'})}</div></div><div class="msg-subject">${m.subject}</div><div class="msg-body">${m.message.length>180?m.message.slice(0,180)+'…':m.message}</div><div class="msg-actions"><button class="act-btn act-read" onclick="viewMsg('${m._id}')"><i class="fa fa-eye"></i> View</button>${!m.read?`<button class="act-btn act-approve" onclick="doMarkRead('${m._id}')"><i class="fa fa-check"></i> Mark Read</button>`:''}<a href="mailto:${m.email}?subject=Re: ${encodeURIComponent(m.subject)}" class="act-btn act-edit"><i class="fa fa-reply"></i> Reply</a><button class="act-btn act-delete" onclick="confirmDel('message','${m._id}','message from ${esc(m.name)}')"><i class="fa fa-trash"></i></button></div></div>`).join('');}
+function renderDashMsgs(){const c=document.getElementById('dashMessages');const r=allMessages.slice(0,3);if(!r.length){c.innerHTML='<p style="text-align:center;padding:16px;color:var(--text2)">No messages yet.</p>';return;}c.innerHTML=r.map(m=>`<div class="msg-card ${m.read?'read':'unread'}" style="margin-bottom:10px"><div class="msg-header"><div><div class="msg-sender">${m.name}</div><div class="msg-email">${m.email}</div></div><div class="msg-date">${new Date(m.createdAt).toLocaleDateString('en-IN')}</div></div><div class="msg-subject">${m.subject}</div><div class="msg-body" style="margin-top:4px">${m.message.slice(0,100)}…</div></div>`).join('');}
+function viewMsg(id){const m=allMessages.find(x=>x._id===id);if(!m)return;document.getElementById('mName').textContent=m.name;document.getElementById('mEmail').textContent=m.email;document.getElementById('mDate').textContent=new Date(m.createdAt).toLocaleString('en-IN',{dateStyle:'long',timeStyle:'short'});document.getElementById('mSubject').textContent=m.subject;document.getElementById('mBody').textContent=m.message;document.getElementById('mReplyBtn').href=`mailto:${m.email}?subject=Re: ${encodeURIComponent(m.subject)}`;openModal('messageModal');if(!m.read)doMarkRead(id);}
+async function doMarkRead(id){try{await API.markRead(id);const m=allMessages.find(x=>x._id===id);if(m)m.read=true;renderMessages();renderDashMsgs();await loadStats();}catch(e){showToast(e.message,'error');}}
+
+/* ═══════ PARTICIPANTS ════════════════════════ */
+let allParticipants = [];
+let participantEventFilter = '';
+
+async function loadParticipants(){
+  try{
+    allParticipants = await API.getParticipants();
+    renderParticipantsTable();
+    buildParticipantEventFilter();
+    // Badge: total participants
+    const badge = document.getElementById('participantsBadge');
+    if(allParticipants.length){ badge.textContent=allParticipants.length; badge.style.display='inline-flex'; }
+    else badge.style.display='none';
+  }catch{showToast('Failed to load participants','error');}
+}
+
+function buildParticipantEventFilter(){
+  const sel = document.getElementById('participantEventFilter');
+  if(!sel) return;
+  // Collect unique events from participant data
+  const seen = {};
+  allParticipants.forEach(p=>{ if(!seen[p.eventId]) seen[p.eventId]=p.eventTitle; });
+  const current = sel.value;
+  sel.innerHTML = '<option value="">All Events</option>' +
+    Object.entries(seen).map(([id,title])=>`<option value="${id}"${id===current?' selected':''}>${title}</option>`).join('');
+}
+
+function filterParticipantsByEvent(){
+  participantEventFilter = document.getElementById('participantEventFilter').value;
+  renderParticipantsTable();
+}
+
+function renderParticipantsTable(){
+  const b = document.getElementById('participantsTable');
+  const filtered = participantEventFilter
+    ? allParticipants.filter(p => p.eventId === participantEventFilter)
+    : allParticipants;
+  document.getElementById('participantCount').textContent =
+    `${filtered.length} participant${filtered.length!==1?'s':''}`+(participantEventFilter?' for this event':' total');
+  if(!filtered.length){
+    b.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:24px">No participants yet.</td></tr>';
+    return;
+  }
+  b.innerHTML=filtered.map((p,i)=>`
+    <tr data-search="${(p.name+p.email+p.eventTitle).toLowerCase()}">
+      <td style="color:var(--text2);font-size:.85rem">${i+1}</td>
+      <td><strong>${p.name}</strong></td>
+      <td><a href="mailto:${p.email}" style="color:var(--ieee-blue);font-size:.88rem">${p.email}</a></td>
+      <td><span class="status-badge upcoming" style="font-size:.75rem">${p.eventTitle}</span></td>
+      <td style="font-size:.82rem;color:var(--text2)">${new Date(p.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</td>
+      <td><button class="act-btn act-delete" onclick="confirmDel('participant','${p._id}','${esc(p.name)}')" ><i class="fa fa-trash"></i> Remove</button></td>
+    </tr>`).join('');
+}
+
+/* ═══════ SUBSCRIBERS ════════════════════════ */
+async function loadSubscribers(){try{allSubs=await API.getSubscribers();renderSubsTable();}catch{showToast('Failed to load subscribers','error');}}
+function renderSubsTable(){
+  const b=document.getElementById('subsTable');
+  document.getElementById('subCount').textContent=`${allSubs.length} active subscriber${allSubs.length!==1?'s':''}`;
+  if(!allSubs.length){b.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--text2);padding:24px">No subscribers yet.</td></tr>';return;}
+  b.innerHTML=allSubs.map((s,i)=>`<tr data-search="${s.email}">
+    <td style="color:var(--text2);font-size:.85rem">${i+1}</td>
+    <td><strong>${s.email}</strong></td>
+    <td>${new Date(s.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</td>
+    <td><button class="act-btn act-delete" onclick="confirmDel('subscriber','${s._id}','${s.email}')"><i class="fa fa-trash"></i> Remove</button></td>
+  </tr>`).join('');
+}
+
+/* ═══════ NOTIFY ════════════════════════════= */
+async function loadNotifyPreview(){
+  try{
+    const p=await API.getNotifyPreview();
+    document.getElementById('np-subs').textContent=p.subscribers;
+    document.getElementById('np-members').textContent=p.members;
+    document.getElementById('np-committee').textContent=p.committee;
+    document.getElementById('np-total').textContent=p.total;
+  }catch{}
+}
+async function sendBlast(){
+  const subject=document.getElementById('notifySubject').value.trim();
+  const message=document.getElementById('notifyMsg').value.trim();
+  if(!subject||!message){showToast('Subject and message are required.','error');return;}
+  const btn=document.getElementById('sendBlastBtn');
+  btn.disabled=true; btn.innerHTML='<i class="fa fa-spinner fa-spin"></i> Sending…';
+  try{
+    const r=await API.sendNotify({
+      subject, message,
+      sendTo:{
+        subscribers:document.getElementById('nt-subs').checked,
+        members:    document.getElementById('nt-members').checked,
+        committee:  document.getElementById('nt-committee').checked,
+      }
+    });
+    showToast(`✅ Email sent to ${r.count} recipient(s)!`,'success');
+    document.getElementById('notifySubject').value='';
+    document.getElementById('notifyMsg').value='';
+  }catch(e){showToast(e.message||'Send failed. Check SMTP settings in .env','error');}
+  finally{btn.disabled=false;btn.innerHTML='<i class="fa fa-paper-plane"></i> Send to All Recipients';}
+}
+
+/* ═══════ DELETE CONFIRM ═════════════════════ */
+function confirmDel(type,id,name){
+  document.getElementById('confirmMsg').textContent=`Delete "${name}"? This cannot be undone.`;
+  document.getElementById('confirmOk').onclick=async()=>{
+    try{
+      if(type==='event')      await API.deleteEvent(id);
+      if(type==='gallery')    await API.deleteGallery(id);
+      if(type==='committee')  await API.deleteCommittee(id);
+      if(type==='member')     await API.deleteMember(id);
+      if(type==='message')    await API.deleteMessage(id);
+      if(type==='subscriber') await API.deleteSubscriber(id);
+      if(type==='participant')await API.deleteParticipant(id);
+      if(type==='event')    {await loadEvents();}
+      if(type==='gallery')  {await loadGallery();}
+      if(type==='committee'){await loadCommittee();}
+      if(type==='member')   {await loadMembers();}
+      if(type==='message')  {await loadMessages();}
+      if(type==='subscriber'){await loadSubscribers();}
+      if(type==='participant'){await loadParticipants();}
+      await loadStats();
+      showToast('Deleted.','info');
+      closeModal('confirmModal');
+    }catch(e){showToast(e.message||'Delete failed.','error');}
+  };
+  openModal('confirmModal');
+}
+
+/* ═══════ MODAL / TABLE HELPERS ══════════════ */
+function openModal(id) {document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+function filterTable(id,q){q=q.toLowerCase();document.querySelectorAll(`#${id} tr[data-search]`).forEach(r=>{r.style.display=r.dataset.search.includes(q)?'':'none';});}
+function esc(s){return(s||'').replace(/'/g,"\\'");}
+
+/* ═══════ TOAST ══════════════════════════════ */
+function showToast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className=`show ${type}`;clearTimeout(window._tt);window._tt=setTimeout(()=>{t.className='';},3800);}
+
+window.addEventListener('load', tryAutoLogin);
+</script>
+</body>
+</html>

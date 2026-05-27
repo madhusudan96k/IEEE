@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Membership – IEEE Student Chapter DBATU</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    .upload-box{
+      border:2px dashed var(--border);border-radius:12px;
+      padding:24px;text-align:center;cursor:pointer;
+      transition:border .3s,background .3s;background:var(--bg2);
+      position:relative;
+    }
+    .upload-box:hover,.upload-box.drag-over{
+      border-color:var(--ieee-blue);background:var(--ieee-sky);
+    }
+    .upload-box input[type="file"]{
+      position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;
+    }
+    .upload-box i{font-size:2rem;color:var(--ieee-blue);margin-bottom:8px;display:block;}
+    .upload-box .ub-title{font-family:'Outfit',sans-serif;font-weight:700;font-size:.95rem;margin-bottom:4px;}
+    .upload-box .ub-sub  {font-size:.8rem;color:var(--text2);}
+    .upload-preview{
+      margin-top:12px;display:none;
+      align-items:center;gap:12px;
+      background:var(--card);border:1px solid var(--border);
+      border-radius:10px;padding:12px 16px;
+    }
+    .upload-preview.show{display:flex;}
+    .upload-preview img{width:48px;height:48px;object-fit:cover;border-radius:8px;border:2px solid var(--ieee-blue);}
+    .upload-preview .up-icon{width:48px;height:48px;border-radius:8px;background:var(--ieee-sky);display:flex;align-items:center;justify-content:center;color:var(--ieee-blue);font-size:1.3rem;}
+    .upload-preview .up-name{font-size:.88rem;font-weight:600;flex:1;}
+    .upload-preview .up-size{font-size:.78rem;color:var(--text2);}
+    .upload-preview .up-remove{background:none;border:none;color:#e53e3e;cursor:pointer;font-size:1rem;padding:4px;}
+  </style>
+</head>
+<body>
+<div id="nav-container"></div>
+
+<!-- Hero Banner -->
+<div class="pt-nav" style="background:linear-gradient(145deg,#001e3c,#003f6b,#006699);padding:72px 0 60px">
+  <div class="container" style="text-align:center">
+    <span class="section-badge">Join Us</span>
+    <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(2.2rem,5vw,3.5rem);font-weight:700;color:#fff;margin:12px 0 16px">Membership</h1>
+    <p style="color:rgba(255,255,255,.75);max-width:520px;margin:0 auto;font-size:1.05rem;line-height:1.7">Become part of the world's largest technical professional organisation and unlock a global network of engineers and innovators.</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+
+    <!-- Hero CTA -->
+    <div class="membership-hero">
+      <h2>Join IEEE – Shape the Future</h2>
+      <p>Become part of the world's largest technical professional organisation and unlock a global network of engineers, innovators, and leaders.</p>
+      <a class="btn btn-accent" href="https://www.ieee.org/membership/join/index.html" target="_blank">
+        <i class="fa fa-external-link-alt"></i> Join on IEEE.org
+      </a>
+    </div>
+
+    <!-- Plan Card -->
+    <div style="text-align:center;margin-bottom:72px">
+      <span class="section-badge">Membership Plan</span>
+      <h2 class="section-title" style="margin-bottom:40px">Student Membership</h2>
+      <div class="plan-card">
+        <div style="font-size:.78rem;color:var(--text2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px">Annual Fee</div>
+        <div class="plan-price">₹1,200 <small>/ year</small></div>
+        <p style="color:var(--text2);margin:14px 0;font-size:.9rem">Equivalent to ~$14 USD for full IEEE Student Membership</p>
+        <div class="plan-features">
+          <div class="plan-feature"><i class="fa fa-check"></i> IEEE Xplore Digital Library</div>
+          <div class="plan-feature"><i class="fa fa-check"></i> IEEE Spectrum Magazine</div>
+          <div class="plan-feature"><i class="fa fa-check"></i> Technical Communities Access</div>
+          <div class="plan-feature"><i class="fa fa-check"></i> Career &amp; Job Resources</div>
+          <div class="plan-feature"><i class="fa fa-check"></i> Student Paper Competitions</div>
+          <div class="plan-feature"><i class="fa fa-check"></i> Local Chapter Events &amp; Workshops</div>
+          <div class="plan-feature"><i class="fa fa-check"></i> IEEE Xtreme Programming Contest</div>
+          <div class="plan-feature"><i class="fa fa-check"></i> Leadership &amp; Mentorship Programs</div>
+        </div>
+        <a class="btn btn-primary btn-full" href="https://www.ieee.org/membership/join/index.html" target="_blank">Get Started on IEEE.org →</a>
+      </div>
+    </div>
+
+    <!-- Steps -->
+    <span class="section-badge">How to Join</span>
+    <h2 class="section-title" style="margin-bottom:40px">4 Simple Steps</h2>
+    <div class="steps-grid" style="margin-bottom:72px">
+      <div class="step-item reveal"><div class="step-num">1</div><h4>Visit IEEE.org</h4><p>Go to ieee.org/membership and click "Join IEEE".</p></div>
+      <div class="step-item reveal"><div class="step-num">2</div><h4>Create Account</h4><p>Register with your DBATU email and fill in personal details.</p></div>
+      <div class="step-item reveal"><div class="step-num">3</div><h4>Select Membership</h4><p>Choose "Student Member" and find our chapter (DBATU, Lonere).</p></div>
+      <div class="step-item reveal"><div class="step-num">4</div><h4>Pay &amp; Join</h4><p>Complete payment and receive your IEEE Member ID. Welcome!</p></div>
+    </div>
+
+    <!-- Registration Form -->
+    <div class="form-card">
+      <h3>Register with IEEE SC DBATU</h3>
+      <p style="color:var(--text2);margin-bottom:28px;font-size:.93rem">
+        Already have an IEEE ID? Register with our chapter to get local benefits, event invites, and committee access.
+        Upload your IEEE membership certificate and a photo for verification.
+      </p>
+
+      <form id="regForm" onsubmit="submitReg(event)" enctype="multipart/form-data">
+
+        <!-- Basic info -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="rName" placeholder="Rahul Sharma" required/>
+          </div>
+          <div class="form-group">
+            <label>DBATU Email *</label>
+            <input type="email" id="rEmail" placeholder="rollno@dbatu.ac.in" required/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>IEEE Member ID</label>
+            <input type="text" id="rIeeeId" placeholder="12345678 (optional if applied)"/>
+          </div>
+          <div class="form-group">
+            <label>Department *</label>
+            <select id="rDept" required>
+              <option value="">Select Department</option>
+              <option>Computer Engineering</option>
+              <option>Electronics &amp; Telecommunication</option>
+              <option>Mechanical Engineering</option>
+              <option>Civil Engineering</option>
+              <option>Chemical Engineering</option>
+              <option>Information Technology</option>
+              <option>Electrical Engineering</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="max-width:280px">
+          <label>Year of Study *</label>
+          <select id="rYear" required>
+            <option value="">Select Year</option>
+            <option>First Year</option>
+            <option>Second Year</option>
+            <option>Third Year</option>
+            <option>Final Year</option>
+          </select>
+        </div>
+
+        <!-- Photo upload -->
+        <div style="margin-bottom:20px">
+          <label style="display:block;font-size:.84rem;font-weight:600;margin-bottom:8px;font-family:'Outfit',sans-serif">
+            Your Photo <span style="color:var(--text2);font-weight:400">(optional – shown to admin for verification)</span>
+          </label>
+          <div class="upload-box" id="photoBox"
+               ondragover="dragOver(event,'photoBox')"
+               ondragleave="dragLeave('photoBox')"
+               ondrop="dropFile(event,'rPhoto','photoBox','photoPreview','photo')">
+            <input type="file" id="rPhoto" accept="image/*" onchange="previewFile(this,'photoPreview','photo')"/>
+            <i class="fa fa-user-circle"></i>
+            <div class="ub-title">Upload Your Photo</div>
+            <div class="ub-sub">JPG, PNG or WebP · Max 5 MB · Click or drag &amp; drop</div>
+          </div>
+          <div class="upload-preview" id="photoPreview">
+            <img id="photoImg" src="" alt="Preview"/>
+            <div class="up-name" id="photoName"></div>
+            <button type="button" class="up-remove" onclick="clearFile('rPhoto','photoPreview')">
+              <i class="fa fa-times-circle"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Certificate upload -->
+        <div style="margin-bottom:28px">
+          <label style="display:block;font-size:.84rem;font-weight:600;margin-bottom:8px;font-family:'Outfit',sans-serif">
+            IEEE Membership Certificate <span style="color:var(--text2);font-weight:400">(PDF or image – required for verification)</span>
+          </label>
+          <div class="upload-box" id="certBox"
+               ondragover="dragOver(event,'certBox')"
+               ondragleave="dragLeave('certBox')"
+               ondrop="dropFile(event,'rCert','certBox','certPreview','cert')">
+            <input type="file" id="rCert" accept="image/*,.pdf" onchange="previewFile(this,'certPreview','cert')"/>
+            <i class="fa fa-file-certificate"></i>
+            <div class="ub-title">Upload IEEE Certificate</div>
+            <div class="ub-sub">PDF, JPG or PNG · Max 10 MB · Click or drag &amp; drop</div>
+          </div>
+          <div class="upload-preview" id="certPreview">
+            <div class="up-icon" id="certIcon"><i class="fa fa-file-alt"></i></div>
+            <div>
+              <div class="up-name" id="certName"></div>
+              <div class="up-size" id="certSize"></div>
+            </div>
+            <button type="button" class="up-remove" onclick="clearFile('rCert','certPreview')">
+              <i class="fa fa-times-circle"></i>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" type="submit" id="regBtn">
+          <i class="fa fa-paper-plane"></i> Submit Registration
+        </button>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<div id="footer-container"></div>
+<script src="js/api.js"></script>
+<script src="js/nav.js"></script>
+<script>
+/* ── File preview helpers ── */
+function previewFile(input, previewId, type) {
+  const file = input.files[0];
+  if (!file) return;
+  const preview = document.getElementById(previewId);
+  preview.classList.add('show');
+
+  if (type === 'photo') {
+    const reader = new FileReader();
+    reader.onload = e => { document.getElementById('photoImg').src = e.target.result; };
+    reader.readAsDataURL(file);
+    document.getElementById('photoName').textContent = file.name;
+  } else {
+    const icon = document.getElementById('certIcon');
+    icon.innerHTML = file.type === 'application/pdf'
+      ? '<i class="fa fa-file-pdf" style="color:#e53e3e"></i>'
+      : '<i class="fa fa-file-image" style="color:var(--ieee-blue)"></i>';
+    document.getElementById('certName').textContent = file.name;
+    document.getElementById('certSize').textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+  }
+}
+function clearFile(inputId, previewId) {
+  document.getElementById(inputId).value = '';
+  document.getElementById(previewId).classList.remove('show');
+  if (inputId === 'rPhoto') document.getElementById('photoImg').src = '';
+}
+function dragOver(e, boxId)  { e.preventDefault(); document.getElementById(boxId).classList.add('drag-over'); }
+function dragLeave(boxId)    { document.getElementById(boxId).classList.remove('drag-over'); }
+function dropFile(e, inputId, boxId, previewId, type) {
+  e.preventDefault();
+  dragLeave(boxId);
+  const file = e.dataTransfer.files[0];
+  if (!file) return;
+  const input    = document.getElementById(inputId);
+  const dt       = new DataTransfer();
+  dt.items.add(file);
+  input.files    = dt.files;
+  previewFile(input, previewId, type);
+}
+
+/* ── Form submit ── */
+async function submitReg(e) {
+  e.preventDefault();
+  const btn = document.getElementById('regBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Submitting…';
+
+  const fd = new FormData();
+  fd.append('name',       document.getElementById('rName').value);
+  fd.append('email',      document.getElementById('rEmail').value);
+  fd.append('ieeeId',     document.getElementById('rIeeeId').value || 'N/A');
+  fd.append('department', document.getElementById('rDept').value);
+  fd.append('year',       document.getElementById('rYear').value);
+
+  const photo = document.getElementById('rPhoto').files[0];
+  const cert  = document.getElementById('rCert').files[0];
+  if (photo) fd.append('photo',       photo);
+  if (cert)  fd.append('certificate', cert);
+
+  try {
+    await API.registerMember(fd);
+    showToast('Registration submitted! We will verify within 48 hours. 🎉', 'success');
+    document.getElementById('regForm').reset();
+    clearFile('rPhoto', 'photoPreview');
+    clearFile('rCert',  'certPreview');
+  } catch(err) {
+    showToast(err.message || 'Registration failed. Please try again.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa fa-paper-plane"></i> Submit Registration';
+  }
+}
+</script>
+</body>
+</html>
